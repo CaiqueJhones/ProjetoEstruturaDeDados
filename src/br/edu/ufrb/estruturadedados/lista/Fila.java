@@ -1,0 +1,104 @@
+package br.edu.ufrb.estruturadedados.lista;
+
+import java.io.Serializable;
+import java.util.Iterator;
+
+/**
+ * <p>
+ * As filas são estruturas baseadas no princípio <strong>FIFO</strong> <i>(first
+ * in, first out)</i>, em que os elementos que foram inseridos no início são os
+ * primeiros a serem removidos. Uma fila possui duas funções básicas: ENQUEUE,
+ * que adiciona um elemento ao final da fila, e DEQUEUE, que remove o elemento
+ * no início da fila. A operação DEQUEUE só pode ser aplicada se a fila não
+ * estiver vazia, causando um erro de underflow ou fila vazia se esta operação
+ * for realizada nesta situação.
+ * </p>
+ * 
+ * @author Caique
+ *
+ * @param <T>
+ *            O tipo de elementos para <code>Fila</code>.
+ * @version 1.0
+ * @since API-1.0
+ * @see br.edu.ufrb.estruturadedados.lista.Lista
+ */
+public class Fila<T> implements Iterable<T>, Serializable {
+
+	private static final long serialVersionUID = 6224884945934714592L;
+	private Lista<T> data;
+
+	/**
+	 * Construtor padrão que inicializa uma lista.
+	 */
+	public Fila() {
+		data = new ListaSimplesEncadeada<T>();
+	}
+
+	/**
+	 * Adiciona uma elmento na <code>Fila</code>.
+	 * 
+	 * @param value
+	 *            Objeto a ser adicionado na Fila.
+	 * 
+	 */
+	public void push(T value) {
+		data.add(value);
+	}
+
+	/**
+	 * Recupera um elemento da <code>Fila</code>.
+	 * 
+	 * @param index
+	 *            A posição na <code>Fila</code>.
+	 * @return O elemento que se encontra nesta posição.
+	 */
+	public T get(int index) {
+		return data.get(index);
+	}
+
+	/**
+	 * Remove o primeiro elemento da <code>Fila</code>.
+	 * 
+	 * @return O Objeto removido.
+	 */
+	public T remove() {
+		if (isEmpty())
+			return null;
+		T e = data.get(0);
+		data.remove(0);
+		return e;
+	}
+
+	/**
+	 * Captura o tamanho da <code>Fila</code>.
+	 * 
+	 * @return O tamanho da <code>Fila</code>.
+	 */
+	public int size() {
+		return data.size();
+	}
+
+	/**
+	 * Exibe na saída padrão os Objetos da <code>Fila</code>.
+	 * 
+	 * @see {@link Lista#exibeLista()}.
+	 */
+	public void exibeFila() {
+		data.exibeLista();
+	}
+
+	/**
+	 * Verifica se a <code>Fila</code> está vazia.
+	 * 
+	 * @return <code>true</code> se a <code>Fila</code> estiver vazia.
+	 * @see {@link Lista#isEmpty()}
+	 */
+	public boolean isEmpty() {
+		return data.isEmpty();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return data.iterator();
+	}
+}

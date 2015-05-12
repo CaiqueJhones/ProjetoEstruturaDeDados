@@ -1,0 +1,251 @@
+<p>
+Uma lista duplamente ligada (ou lista duplamente encadeada) é uma extensão da
+lista simplesmente ligada (ou lista simplesmente encadeada).
+</p>
+
+<p>
+Numa lista cada elemento, ou nó, é composto normalmente por uma variável que
+guarda a informação(Objeto, inteiro, cadeia de caractéres, etc) e dois
+ponteiros (referências a endereços de memória) que permitem a ligação entre
+os vários nós desta lista. Este tipo de lista é conhecido por
+"Duplamente ligada" ou "Duplamente encadeada" exatamente pelo fato de possuir
+duas váriaveis de controle (ponteiros) ao contrário da lista simplesmente
+ligada que possui somente um, o qual aponta para o próximo elemento da lista.
+</p>
+
+<p>
+A função destas variáveis é guardar o endereço de memória do nó anterior e do
+nó posterior, identificados normalmente como "prev" ou "previous" e "next".
+Com estas estruturas podemos realizar diversas tarefas que seriam impossiveis
+ou muito dispendiosas com uma lista simplesmente encadeada.
+</p>
+
+<p>
+No modelo mais simples deste tipo de lista, ao criar a lista o primeiro nó
+tem seu ponteiro "previous" apontando sempre para nulo e o último nó com seu
+"next" apontando para nulo. Este modelo não é muito confiável, já que não há
+um controle efetivo para saber quem é o primeiro e quem é o ultimo elemento,
+já que a única maneira de extrair tal informação é verificar quem possui o
+"prev" ou o "next" nulo.
+</p>
+{@code}
+package br.edu.ufrb.estruturadedados.lista;
+
+import java.io.Serializable;
+import java.util.Iterator;
+
+/**
+ * @author Caique
+ *
+ * @param <T>
+ *            Tipo de Objetos da Lista.
+ * @since 1.0
+ * @see {@link Lista} e {@link ListaSimplesEncadeada}
+ */
+public class ListaDuplaEncadeada<T> implements Lista<T>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6180689131065718746L;
+	private Nodo primeiro;
+	private Nodo ultimo;
+
+	private int size;
+
+	@Override
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+
+			private Nodo nodo = primeiro;
+
+			@Override
+			public boolean hasNext() {
+				return nodo != null;
+			}
+
+			@Override
+			public T next() {
+				Nodo temp = nodo;
+				nodo = nodo.elo2;
+				return temp.value;
+			}
+		};
+	}
+
+	@Override
+	public void add(T object) {
+		Nodo n = new Nodo(object);
+		if (primeiro == null) {
+			primeiro = n;
+			ultimo = primeiro;
+		} else {
+			ultimo.elo2 = n;
+			n.elo1 = ultimo;
+			ultimo = n;
+		}
+		size++;
+	}
+	
+	/**
+	 * Adiciona no início da lista.
+	 * @param object o objeto a ser inserido.
+	 */
+	public void addInicio(T object) {
+		add(0, object);
+	}
+
+	@Override
+	public void add(int index, T object) {
+		if (index < 0)
+			throw new IllegalArgumentException(
+					"Valor tem que ser maior que zero");
+		if (index >= size - 1 || primeiro == null)
+			add(object);
+		else {
+			Nodo n = new Nodo(object);
+			Nodo temp;
+			Nodo aux;
+
+			if (index == 0) {
+				temp = primeiro;
+				primeiro = n;
+				primeiro.elo2 = temp;
+				temp.elo1 = n;
+			} else {
+				aux = getNodo(index - 1);
+				temp = aux.elo2;
+
+				aux.elo2 = n;
+				n.elo2 = temp;
+
+				temp.elo1 = n;
+				n.elo1 = aux;
+
+			}
+		}
+	}
+
+	@Override
+	public T get(int index) {
+		return getNodo(index).value;
+	}
+
+	@Override
+	public void remove(int index) {
+		if (index > size - 1 || index < 0)
+			throw new ArrayIndexOutOfBoundsException(index
+					+ "não existe na lista");
+
+		size--;
+		if (index == 0) {
+			primeiro = primeiro.elo2;
+			return;
+		}
+		Nodo anterior = getNodo(index - 1);
+		if (index == size) {
+			anterior.elo2 = null;
+		} else {
+			Nodo atual = getNodo(index);
+			anterior.elo2 = atual.elo2;
+		}
+	}
+
+	@Override
+	public void remove(T object) {
+		Nodo atual = primeiro;
+		Nodo ant = null;
+		while (atual != null) {
+			if (atual.value.equals(object)) {
+				if (ant == null) {
+					primeiro = primeiro.elo2;
+				} else if (atual.elo2 == null) {
+					ant.elo2 = null;
+				} else {
+					ant.elo2 = atual.elo2;
+				}
+				size--;
+				break;
+			}
+			ant = atual;
+			atual = atual.elo2;
+		}
+	}
+
+	@Override
+	public int size() {
+		return size;
+	}
+
+	@Override
+	public void exibeLista() {
+		for (T t : this) {
+			System.out.println(t);
+		}
+	}
+	
+	/**
+	 * Percorre a lista de modo contrário e exibe na saída padrão.
+	 */
+	public void exibeListaContrario() {
+		Nodo atual = ultimo;
+		while (atual != null) {
+			System.out.println(atual.value);
+			atual = atual.elo1;
+		}
+	}
+
+	@Override
+	public void fill(Lista<T> list) {
+		for (T element : list) {
+			add(element);
+		}
+	}
+
+	@Override
+	public void clear() {
+		size = 0;
+		primeiro = ultimo = null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	@Override
+	public T[] toArray(T[] array) {
+		try {
+			int i = 0;
+			for (T e : this) {
+				array[i] = e;
+				i++;
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return array;
+		}
+		return array;
+	}
+
+	private Nodo getNodo(int index) {
+		if (index > size - 1 || index < 0)
+			throw new ArrayIndexOutOfBoundsException(index
+					+ " não existe na lista");
+		Nodo atual = primeiro;
+		for (int i = 0; i < index; i++) {
+			atual = atual.elo2;
+		}
+		return atual;
+	}
+
+	private class Nodo {
+		T value;
+		Nodo elo1;
+		Nodo elo2;
+
+		public Nodo(T value) {
+			this.value = value;
+		}
+	}
+
+}

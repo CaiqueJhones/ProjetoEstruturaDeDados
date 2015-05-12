@@ -1,5 +1,7 @@
 package br.edu.ufrb.estruturadedados.lista;
 
+import br.edu.ufrb.estruturadedados.Estrutura;
+
 /**
  * <p>
  * uma lista ou sequência é uma estrutura de dados abstrata que implementa uma
@@ -16,7 +18,7 @@ package br.edu.ufrb.estruturadedados.lista;
  * @param <T> Tipo de objetos da lista.
  * @since 1.0
  */
-public interface Lista<T> extends Iterable<T> {
+public interface Lista<T> extends Estrutura<T> {
 
 	/**
 	 * Adicona novo elemento no final da lista.
@@ -54,12 +56,6 @@ public interface Lista<T> extends Iterable<T> {
 	 *            elemento a ser eliminado.
 	 */
 	void remove(T object);
-
-	/**
-	 * 
-	 * @return O tamanho da lista.
-	 */
-	int size();
 	
 	/**
 	 * Exibe na saída padrão todos os itens da lista.
@@ -77,13 +73,6 @@ public interface Lista<T> extends Iterable<T> {
 	 * Remove todos os elementos da <code>Lista</code>.
 	 */
 	void clear();
-
-	/**
-	 * Verifica se está vazio
-	 * 
-	 * @return <code>true</code> se vázio.
-	 */
-	boolean isEmpty();
 
 	/**
 	 * Devolve os elementos em forma de vetor

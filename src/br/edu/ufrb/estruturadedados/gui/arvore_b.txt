@@ -1,0 +1,163 @@
+<p>
+Uma árvore B é uma estrutura de dados projetada para funcionar especialmente
+em memória secundária como um disco magnético ou outros dispositivos de
+armazenamento secundário. Dentre suas propriedades ela permite a inserção,
+remoção e busca de chaves numa complexidade de tempo logarítmica e, por esse
+motivo, é muito empregada em aplicações que necessitam manipular grandes
+quantidades de informação tais como um banco de dados ou um sistema de
+arquivos.
+</p>
+
+<p>
+Inventada por Rudolf Bayer e Edward Meyers McCreight em 1971 enquanto
+trabalhavam no Boeing Scientific Research Labs, a origem do nome (árvore B)
+não foi definida por estes. Especula-se que o B venha da palavra
+balanceamento, do nome de um de seus inventores Bayer ou de Boeing, nome da
+empresa.
+</p>
+
+<p>
+Se analisarmos as árvores B, elas são uma generalização das árvores binária
+de busca, pois cada nó de uma árvore binária armazena uma única chave de
+busca, enquanto as árvores B armazenam um número maior do que um de chaves de
+busca em cada nó, ou no termo mais usual para essa árvore, em cada página.
+Como a idéia principal das árvores B é trabalhar com dispositivos de memória
+secundária, quanto menos acessos a disco a estrutura de dados proporcionar,
+melhor será o desempenho do sistema na operação de busca sobre os dados
+manipulados.
+</p>
+{@code}
+package br.edu.ufrb.estruturadedados.arvores;
+
+/**
+ * @author Caique
+ *
+ * @param <T>
+ *            Tipo de Objeto armazenado na Árvore.
+ * @version 1.0
+ * @since API-1.0
+ */
+public class ArvoreB<T extends Comparable<T>> {
+
+	public Nodo root;
+	private int size;
+
+	public ArvoreB() {
+		root = new Nodo();
+	}
+
+	public void add(T value) {
+		if (root.value1 == null)
+			root.value1 = value;
+		else if (root.value2 == null)
+			root.value2 = value;
+		else
+			add(root, value);
+		size++;
+	}
+
+	public Nodo add(Nodo atual, T value) {
+		if (atual != null) {
+			if (!atual.hasSpace()) {
+				if (value.compareTo(atual.value1) <= 0)
+					atual.esquerda = add(atual.esquerda, value);
+				else if (value.compareTo(atual.value2) >= 0)
+					atual.direita = add(atual.direita, value);
+				else
+					atual.centro = add(atual.centro, value);
+			} else {
+				if (atual.value1.compareTo(value) > 0) {
+					T temp = atual.value1;
+					atual.value1 = value;
+					atual.value2 = temp;
+				} else {
+					atual.value2 = value;
+				}
+			}
+		} else {
+			atual = new Nodo(value);
+		}
+		return atual;
+	}
+
+	public int size() {
+		return size;
+	}
+
+	public void ordem1(Nodo n) {
+		if (n == null)
+			return;
+		System.out.println(n.value1);
+		System.out.println(n.value2);
+		ordem1(n.esquerda);
+		ordem1(n.centro);
+		ordem1(n.direita);
+	}
+
+	public void ordem2(Nodo n) {
+		if (n == null)
+			return;
+		ordem2(n.esquerda);
+		System.out.println(n.value1);
+		System.out.println(n.value2);
+		ordem2(n.centro);
+		ordem2(n.direita);
+	}
+
+	public void ordem3(Nodo n) {
+		if (n == null)
+			return;
+		ordem3(n.esquerda);
+		ordem3(n.centro);
+		System.out.println(n.value1);
+		System.out.println(n.value2);
+		ordem3(n.direita);
+	}
+
+	public void ordem4(Nodo n) {
+		if (n == null)
+			return;
+		ordem4(n.esquerda);
+		ordem4(n.centro);
+		ordem4(n.direita);
+		System.out.println(n.value1);
+		System.out.println(n.value2);
+	}
+
+	public void emOrdem(Nodo n) {
+		if (n == null)
+			return;
+		emOrdem(n.esquerda);
+		System.out.println(n.value1);
+		emOrdem(n.centro);
+		System.out.println(n.value2);
+		emOrdem(n.direita);
+	}
+
+	public class Nodo {
+		Nodo esquerda;
+		Nodo direita;
+		Nodo centro;
+		T value1;
+		T value2;
+
+		public Nodo() {
+			value1 = null;
+			value2 = null;
+		}
+
+		public Nodo(T value1, T value2) {
+			this.value1 = value1;
+			this.value2 = value2;
+		}
+
+		public Nodo(T vl) {
+			value1 = vl;
+			value2 = null;
+		}
+
+		public boolean hasSpace() {
+			return value2 == null;
+		}
+	}
+}
